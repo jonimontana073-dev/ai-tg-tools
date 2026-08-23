@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+  <meta name="theme-color" content="#0b0f14" />
+  <title>AI TG TOOLS-Mini Bot</title>
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="app" id="app">
+    <header class="header">
+      <div class="brand">
+        <span class="brand-mark" aria-hidden="true"></span>
+        <div>
+          <h1 class="brand-name">AI TG TOOLS</h1>
+          <p class="brand-sub" id="userGreeting">Mini Bot</p>
+        </div>
+      </div>
+      <div class="status-pill" id="tgStatus">
+        <span class="status-dot"></span>
+        <span id="tgStatusText">…</span>
+      </div>
+    </header>
+
+    <main class="content">
+      <section class="panel is-active" id="panel-avatar" role="tabpanel" aria-labelledby="tab-avatar">
+        <div class="panel-intro">
+          <h2>Генератор аватарок</h2>
+          <p>Безлимитная генерация аватарок нового поколения</p>
+        </div>
+
+        <div class="avatar-stage">
+          <div class="avatar-glow" aria-hidden="true"></div>
+          <div class="avatar-frame" id="avatarFrame">
+            <img id="avatarPreview" class="avatar-preview" alt="Превью аватара" width="200" height="200" />
+            <div class="avatar-loader" id="avatarLoader" hidden>
+              <span class="spinner" aria-hidden="true"></span>
+              <span>Генерация…</span>
+            </div>
+          </div>
+        </div>
+
+        <label class="field-label" for="avatarPrompt">Описание</label>
+        <textarea
+          id="avatarPrompt"
+          class="textarea textarea-sm"
+          rows="3"
+          placeholder="Например: девушка с короткими волосами, мягкий свет, тёмный фон"
+        ></textarea>
+
+        <label class="field-label" for="styleSelect">Стиль</label>
+        <div class="style-row">
+          <select id="styleSelect" class="select" aria-label="Стиль">
+            <option value="portrait photo, studio lighting">Портрет</option>
+            <option value="cinematic, dramatic lighting">Кино</option>
+            <option value="anime style, vibrant colors">Аниме</option>
+            <option value="cyberpunk, neon glow">Cyberpunk</option>
+            <option value="oil painting, classical art">Живопись</option>
+            <option value="3D render, octane, soft HDRI">3D-рендер</option>
+          </select>
+          <button type="button" class="btn btn-ghost" id="styleCycleBtn">→</button>
+        </div>
+
+        <div class="actions">
+          <button type="button" class="btn btn-primary" id="generateAvatarBtn">Сгенерировать</button>
+          <button type="button" class="btn btn-ghost" id="randomPromptBtn">Случайный</button>
+        </div>
+      </section>
+
+      <section class="panel" id="panel-humanize" role="tabpanel" aria-labelledby="tab-humanize" hidden>
+        <div class="panel-intro">
+          <h2>Очеловечиватель</h2>
+          <p>Живой текст без штампов ChatGPT · Gemini 2.5 Flash (free)</p>
+        </div>
+
+        <label class="field-label" for="sourceText">Исходный текст</label>
+        <textarea
+          id="sourceText"
+          class="textarea"
+          rows="6"
+          placeholder="Вставьте сухой или «роботизированный» текст…"
+        ></textarea>
+
+        <div class="actions">
+          <button type="button" class="btn btn-primary" id="humanizeBtn">Очеловечить</button>
+          <button type="button" class="btn btn-ghost" id="clearTextBtn">Очистить</button>
+        </div>
+
+        <label class="field-label" for="resultText">Результат</label>
+        <div class="result-wrap">
+          <textarea id="resultText" class="textarea" rows="6" readonly placeholder="Здесь появится переписанный текст"></textarea>
+          <div class="result-loader" id="textLoader" hidden>
+            <span class="spinner" aria-hidden="true"></span>
+            <span>Обработка…</span>
+          </div>
+        </div>
+
+        <button type="button" class="btn btn-primary btn-full" id="copyResultBtn" disabled>Копировать</button>
+      </section>
+    </main>
+
+    <nav class="tabbar" role="tablist" aria-label="Разделы">
+      <button class="tabbar-item is-active" role="tab" aria-selected="true" data-tab="avatar" id="tab-avatar" type="button">
+        <svg class="tabbar-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 12c2.7 0 4.8-2.1 4.8-4.8S14.7 2.4 12 2.4 7.2 4.5 7.2 7.2 9.3 12 12 12zm0 2.4c-3.2 0-9.6 1.6-9.6 4.8v1.2h19.2v-1.2c0-3.2-6.4-4.8-9.6-4.8z"/></svg>
+        <span>Аватар</span>
+      </button>
+      <button class="tabbar-item" role="tab" aria-selected="false" data-tab="humanize" id="tab-humanize" type="button">
+        <svg class="tabbar-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 5.5h18v2H3v-2zm0 5.5h12v2H3v-2zm0 5.5h18v2H3v-2z"/></svg>
+        <span>Текст</span>
+      </button>
+    </nav>
+
+    <div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>

@@ -1,0 +1,6 @@
+{
+  "name": "ai-tg-tools-mini-bot",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Telegram Mini App: генератор аватарок и очеловечиватель текста"
+}
