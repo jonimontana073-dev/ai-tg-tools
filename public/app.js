@@ -84,13 +84,9 @@
             tg.expand();
           } catch (err) {}
 
-          var themeParams = tg.themeParams || {};
-          var root = document.documentElement;
-          if (themeParams.bg_color) root.style.setProperty("--bg", themeParams.bg_color);
-          if (themeParams.secondary_bg_color) root.style.setProperty("--bg-elevated", themeParams.secondary_bg_color);
-          if (themeParams.text_color) root.style.setProperty("--text", themeParams.text_color);
-          if (themeParams.hint_color) root.style.setProperty("--muted", themeParams.hint_color);
-          if (themeParams.button_color) root.style.setProperty("--accent", themeParams.button_color);
+          // Цвета приложения намеренно фиксированы (тёмная палитра из styles.css)
+          // и НЕ подстраиваются под тему Telegram пользователя — иначе на части
+          // светлых/смешанных тем получается тёмный текст на тёмном фоне.
 
           var user = tg.initDataUnsafe && tg.initDataUnsafe.user;
           if (userGreeting) {
