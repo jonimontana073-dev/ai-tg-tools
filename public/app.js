@@ -5,6 +5,7 @@
   var avatarSafetyTimer = null;
   var lastAvatarRequestAt = 0;
   var AVATAR_COOLDOWN_MS = 10000;
+  var lastAvatarUrl = null;
 
   var RANDOM_PROMPTS = [
     "young woman with short silver hair, calm eyes, dark background",
@@ -42,6 +43,7 @@
     var styleSelect = document.getElementById("styleSelect");
     var styleCycleBtn = document.getElementById("styleCycleBtn");
     var generateAvatarBtn = document.getElementById("generateAvatarBtn");
+    var downloadAvatarBtn = document.getElementById("downloadAvatarBtn");
     var randomPromptBtn = document.getElementById("randomPromptBtn");
     var sourceText = document.getElementById("sourceText");
     var resultText = document.getElementById("resultText");
@@ -225,6 +227,8 @@
         }
 
         if (avatarPreview) avatarPreview.src = data.url;
+        lastAvatarUrl = data.url;
+        if (downloadAvatarBtn) downloadAvatarBtn.disabled = false;
         hideAvatarLoader();
         showToast("Аватар готов!");
       } catch (err) {
@@ -286,6 +290,41 @@
       }
     }
 
+    // ---------- СКАЧИВАНИЕ АВАТАРА ----------
+
+    function pickExtensionFromDataUrl(dataUrl) {
+      var match = /^data:image\/(png|jpe?g)/i.exec(dataUrl);
+      if (!match) return "png";
+      return /jpe?g/i.test(match[1]) ? "jpg" : "png";
+    }
+
+    function triggerDownload(href, filename) {
+      var link = document.createElement("a");
+      link.href = href;
+      link.download = filename;
+      link.rel = "noopener";
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
+
+    function downloadAvatar() {
+      if (!lastAvatarUrl) return;
+
+      if (lastAvatarUrl.indexOf("data:") === 0) {
+        // Картинка от Hugging Face уже целиком в base64 — скачиваем напрямую.
+        var ext = pickExtensionFromDataUrl(lastAvatarUrl);
+        triggerDownload(lastAvatarUrl, "avatar." + ext);
+        return;
+      }
+
+      // Картинка от Pollinations — внешняя ссылка. Прогоняем через наш
+      // сервер, чтобы браузер получил правильный Content-Type и не сохранял
+      // файл как .bin.
+      var proxied = "/api/download-image?url=" + encodeURIComponent(lastAvatarUrl);
+      triggerDownload(proxied, "avatar.jpg");
+    }
+
     function copyToClipboard(text) {
       if (navigator.clipboard && navigator.clipboard.writeText) {
         return navigator.clipboard.writeText(text);
@@ -333,6 +372,8 @@
     });
 
     if (generateAvatarBtn) generateAvatarBtn.addEventListener("click", generateAvatar);
+
+    if (downloadAvatarBtn) downloadAvatarBtn.addEventListener("click", downloadAvatar);
 
     if (randomPromptBtn) {
       randomPromptBtn.addEventListener("click", function () {
