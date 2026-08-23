@@ -8,6 +8,7 @@
     { "src": "/api/chat", "dest": "/backend/chat.js" },
     { "src": "/api/generate", "dest": "/backend/generate.js" },
     { "src": "/api/telegram-webhook", "dest": "/backend/telegramWebhook.js" },
+    { "src": "/api/download-image", "dest": "/backend/downloadImage.js" },
     { "src": "/(.*)", "dest": "/public/$1" }
   ]
 }
