@@ -311,18 +311,28 @@
     function downloadAvatar() {
       if (!lastAvatarUrl) return;
 
-      if (lastAvatarUrl.indexOf("data:") === 0) {
-        // Картинка от Hugging Face уже целиком в base64 — скачиваем напрямую.
-        var ext = pickExtensionFromDataUrl(lastAvatarUrl);
-        triggerDownload(lastAvatarUrl, "avatar." + ext);
+      var isDataUrl = lastAvatarUrl.indexOf("data:") === 0;
+      var targetUrl = isDataUrl
+        ? lastAvatarUrl
+        : window.location.origin + "/api/download-image?url=" + encodeURIComponent(lastAvatarUrl);
+
+      var tg = window.Telegram && window.Telegram.WebApp;
+
+      // Внутри Telegram WebView (особенно на Android) прямое программное
+      // скачивание часто молча блокируется. Надёжный способ — попросить
+      // сам Telegram открыть ссылку во внешнем системном браузере, где
+      // скачивание работает как обычно. Для data: ссылок (Hugging Face)
+      // openLink не подходит — Telegram принимает только http(s) адреса.
+      if (tg && typeof tg.openLink === "function" && !isDataUrl) {
+        tg.openLink(targetUrl);
         return;
       }
 
-      // Картинка от Pollinations — внешняя ссылка. Прогоняем через наш
-      // сервер, чтобы браузер получил правильный Content-Type и не сохранял
-      // файл как .bin.
-      var proxied = "/api/download-image?url=" + encodeURIComponent(lastAvatarUrl);
-      triggerDownload(proxied, "avatar.jpg");
+      var opened = window.open(targetUrl, "_blank");
+      if (!opened) {
+        var ext = isDataUrl ? pickExtensionFromDataUrl(lastAvatarUrl) : "jpg";
+        triggerDownload(targetUrl, "avatar." + ext);
+      }
     }
 
     function copyToClipboard(text) {
